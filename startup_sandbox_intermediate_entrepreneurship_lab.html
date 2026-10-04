@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Startup Sandbox: Unit Economics, Strategy & Market Shocks (Day 1)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Range Slider Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #334155;
+      height: 8px;
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    /* Pulse glow */
+    .glow-cyan {
+      box-shadow: 0 0 25px -3px rgba(6, 182, 212, 0.35);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -3px rgba(16, 185, 129, 0.35);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px -3px rgba(245, 158, 11, 0.35);
+    }
+    .glow-rose {
+      box-shadow: 0 0 25px -3px rgba(244, 63, 94, 0.35);
+    }
+    /* Confetti canvas overlay */
+    #confettiCanvas {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+  <canvas id="confettiCanvas"></canvas>
+
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <!-- Brand & Class Meta -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-black text-xl shadow-lg shadow-cyan-500/20">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs uppercase font-extrabold tracking-widest px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">Day 1 • 2 Hours</span>
+              <span class="text-xs text-slate-400 hidden sm:inline">Advanced Junior Lab (Ages 8-10)</span>
+            </div>
+            <h1 class="text-lg sm:text-xl font-black tracking-tight text-white">Startup Sandbox: <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400">Unit Economics & Market Shocks</span></h1>
+          </div>
+        </div>
+
+        <!-- 120-Minute Master Class Timer -->
+        <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-2xl border border-slate-800 shadow-inner">
+          <div class="flex flex-col text-right">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Classroom Clock</span>
+            <span id="timerDisplay" class="mono font-bold text-2xl text-cyan-300 tracking-wider">120:00</span>
+          </div>
+          <div class="flex items-center gap-1 ml-2">
+            <button id="timerToggleBtn" class="p-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition flex items-center justify-center" title="Start / Pause">
+              <svg id="playIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="pauseIcon" class="w-4 h-4 fill-current hidden" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button id="timerResetBtn" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition" title="Reset to 120m">
+              <svg class="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+            <button id="soundFxToggle" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Toggle Audio Sound FX">
+              🔊
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Phase Tracker -->
+      <div class="mt-3 pt-3 border-t border-slate-800/80 hidden md:flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center gap-1.5" id="phase-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span><strong>0-20m:</strong> Unit Economics</div>
+        <div class="text-slate-600">→</div>
+        <div class="flex items-center gap-1.5" id="phase-2"><span class="w-2 h-2 rounded-full bg-slate-600"></span><strong>20-55m:</strong> Trio Simulator</div>
+        <div class="text-slate-600">→</div>
+        <div class="flex items-center gap-1.5" id="phase-3"><span class="w-2 h-2 rounded-full bg-slate-600"></span><strong>55-70m:</strong> Supply Crunch</div>
+        <div class="text-slate-600">→</div>
+        <div class="flex items-center gap-1.5" id="phase-4"><span class="w-2 h-2 rounded-full bg-slate-600"></span><strong>70-105m:</strong> Market Shocks</div>
+        <div class="text-slate-600">→</div>
+        <div class="flex items-center gap-1.5" id="phase-5"><span class="w-2 h-2 rounded-full bg-slate-600"></span><strong>105-120m:</strong> Boardroom P&L</div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <div class="flex gap-2 overflow-x-auto pt-3 scrollbar-none">
+        <button class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20" data-tab="tab-concepts">
+          📚 Concepts & Briefing
+        </button>
+        <button class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="tab-simulator">
+          🎮 Trio Startup Engine
+        </button>
+        <button class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="tab-shocks">
+          ⚡ Market Shock Arena
+        </button>
+        <button class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="tab-dilemmas">
+          🗳️ Classroom Dilemma Matrix
+        </button>
+        <button class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="tab-leaderboard">
+          🏆 Boardroom P&L
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <section id="tab-concepts" class="tab-content space-y-6">
+      <!-- Big Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900/60 via-slate-900 to-slate-900 border border-indigo-700/40 p-6 sm:p-8">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
+            🔥 Executive Level Briefing
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-black text-white leading-tight">
+            Today's Mission: Move Beyond Simple Sales to <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-300">Unit Economics & Market Power</span>
+          </h2>
+          <p class="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
+            Welcome, Founders! Today you are not just selling lemonade. You are managing working capital, avoiding supply chain choke-points, and protecting gross margins when macro-economic shocks hit our 3 star companies run by <strong class="text-white">Prithvika</strong>, <strong class="text-white">Aarav</strong>, and <strong class="text-white">Akshaya</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Concept Cards (Interactive Flash Cards) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- COGS Card -->
+        <div class="bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 transition p-5 rounded-2xl shadow-lg relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">Concept #1</span>
+            <span class="text-xl">📦</span>
+          </div>
+          <h3 class="text-lg font-black text-white">COGS (Unit Cost)</h3>
+          <p class="text-xs text-slate-400 mt-1">Cost of Goods Sold: The direct cash spent to make exactly <strong>ONE</strong> single item (materials + packaging + direct labor).</p>
+          <div class="mt-3 p-2 bg-slate-950/60 rounded-xl text-[11px] font-mono text-cyan-300 border border-slate-800">
+            Formula: Raw Ingredients + Box = COGS
+          </div>
+        </div>
+
+        <!-- Margin Card -->
+        <div class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 transition p-5 rounded-2xl shadow-lg relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Concept #2</span>
+            <span class="text-xl">💰</span>
+          </div>
+          <h3 class="text-lg font-black text-white">Gross Margin %</h3>
+          <p class="text-xs text-slate-400 mt-1">The % of revenue you keep after paying raw production costs. High margin = safety armor during bad times!</p>
+          <div class="mt-3 p-2 bg-slate-950/60 rounded-xl text-[11px] font-mono text-emerald-300 border border-slate-800">
+            Formula: (Price - COGS) ÷ Price × 100
+          </div>
+        </div>
+
+        <!-- Bottleneck Card -->
+        <div class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 transition p-5 rounded-2xl shadow-lg relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">Concept #3</span>
+            <span class="text-xl">⏳</span>
+          </div>
+          <h3 class="text-lg font-black text-white">The Bottleneck</h3>
+          <p class="text-xs text-slate-400 mt-1">The slowest step in your business. Having 1,000 customers doesn't help if your 3D printer can only make 8 units!</p>
+          <div class="mt-3 p-2 bg-slate-950/60 rounded-xl text-[11px] font-mono text-amber-300 border border-slate-800">
+            Constraint: Max Output Speed Limit
+          </div>
+        </div>
+
+        <!-- Spoilage Card -->
+        <div class="bg-slate-900/90 border border-slate-800 hover:border-rose-500/50 transition p-5 rounded-2xl shadow-lg relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-wider">Concept #4</span>
+            <span class="text-xl">🧊</span>
+          </div>
+          <h3 class="text-lg font-black text-white">Inventory Risk & Spoilage</h3>
+          <p class="text-xs text-slate-400 mt-1">Unsold physical food or drinks go bad. Overproducing turns your precious startup cash into garbage bin waste!</p>
+          <div class="mt-3 p-2 bg-slate-950/60 rounded-xl text-[11px] font-mono text-rose-300 border border-slate-800">
+            Rule: Unsold Inventory = Lost Cash
+          </div>
+        </div>
+      </div>
+
+      <!-- The 3 Competing Startups Overview -->
+      <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-3xl">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span>👥 Meet The 3 Competing Founders</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-normal">Each has a completely unique business model</span>
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-800/40">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">🍹</span>
+              <div>
+                <h4 class="font-extrabold text-white text-base">Prithvika</h4>
+                <p class="text-xs text-cyan-400 font-semibold">Eco-Chill Botanicals</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 mt-2">Craft organic wellness spritzers with custom biodegradable glass bottles.</p>
+            <div class="mt-3 text-[11px] space-y-1 text-slate-400">
+              <div class="flex justify-between"><span class="text-slate-500">Superpower:</span> <span class="text-emerald-400 font-bold">Massive 75% Margins</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Vulnerability:</span> <span class="text-rose-400 font-bold">Spoils after 24 Hours</span></div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-indigo-950/20 border border-indigo-800/40">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">🖨️</span>
+              <div>
+                <h4 class="font-extrabold text-white text-base">Aarav</h4>
+                <p class="text-xs text-indigo-400 font-semibold">HyperCraft 3D Works</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 mt-2">On-demand customized neon keychains, phone holders, and gamer badge accessories.</p>
+            <div class="mt-3 text-[11px] space-y-1 text-slate-400">
+              <div class="flex justify-between"><span class="text-slate-500">Superpower:</span> <span class="text-emerald-400 font-bold">Zero Spoilage (Plastic)</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Vulnerability:</span> <span class="text-amber-400 font-bold">Max 30 Units Bottleneck</span></div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-800/40">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">🐾</span>
+              <div>
+                <h4 class="font-extrabold text-white text-base">Akshaya</h4>
+                <p class="text-xs text-emerald-400 font-semibold">Paws & Motion Concierge</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 mt-2">High-end dog walking, obedience treats, and puppy hydration service at the park.</p>
+            <div class="mt-3 text-[11px] space-y-1 text-slate-400">
+              <div class="flex justify-between"><span class="text-slate-500">Superpower:</span> <span class="text-emerald-400 font-bold">Zero Physical Inventory</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Vulnerability:</span> <span class="text-amber-400 font-bold">High Contractor Labor Cost</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-simulator" class="tab-content hidden space-y-6">
+      
+      <!-- Founder Switcher Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xs uppercase font-extrabold text-slate-400 tracking-wider ml-1">Active Founder Control:</span>
+          <div class="inline-flex p-1 bg-slate-950 rounded-xl border border-slate-800" id="founderSelector">
+            <button class="founder-btn px-4 py-1.5 rounded-lg text-xs font-bold transition bg-cyan-500 text-slate-950" data-founder="prithvika">
+              🍹 Prithvika
+            </button>
+            <button class="founder-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white" data-founder="aarav">
+              🖨️ Aarav
+            </button>
+            <button class="founder-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white" data-founder="akshaya">
+              🐾 Akshaya
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-xs text-slate-400">Starting Working Capital: <span class="font-bold text-white mono">$500.00</span></div>
+          <button id="runSimulationRoundBtn" class="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition active:scale-95">
+            <span>🚀 Execute Production Round</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Simulator Layout: Controls on Left, Metrics & Live Graph on Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Controls Column -->
+        <div class="lg:col-span-6 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-xl relative overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <span id="activeFounderBadge" class="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">
+                Eco-Chill Botanicals
+              </span>
+              <h3 id="activeFounderName" class="text-xl font-black text-white mt-1">Prithvika's Operations Deck</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">Cash Runway</span>
+              <div id="founderCashDisplay" class="text-xl font-black text-emerald-400 mono">$500.00</div>
+            </div>
+          </div>
+
+          <!-- Slider 1: Production Volume / Service Capacity -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-bold">
+              <label for="inputVolume" id="volumeLabel" class="text-slate-200">Production Batch Size (Units)</label>
+              <span id="volumeValue" class="mono text-cyan-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">40 units</span>
+            </div>
+            <input type="range" id="inputVolume" min="5" max="100" value="40" step="5" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+              <span>5 units</span>
+              <span id="volumeConstraintNote" class="text-amber-400">⚠️ Risk: Unsold inventory expires</span>
+              <span>100 units</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: Selling Price -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-bold">
+              <label for="inputPrice" class="text-slate-200">Retail Unit Price ($)</label>
+              <span id="priceValue" class="mono text-emerald-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">$6.00</span>
+            </div>
+            <input type="range" id="inputPrice" min="2" max="25" value="6" step="0.5" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+              <span>$2 (Budget)</span>
+              <span>$12 (Balanced)</span>
+              <span>$25 (Ultra-Luxe)</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: Marketing & Promotion Spend -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-bold">
+              <label for="inputMarketing" class="text-slate-200">Marketing & Influencer Ads ($)</label>
+              <span id="marketingValue" class="mono text-indigo-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">$30.00</span>
+            </div>
+            <input type="range" id="inputMarketing" min="0" max="150" value="30" step="5" class="w-full">
+            <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+              <span>$0 (Word of mouth)</span>
+              <span>Boosts consumer reach</span>
+              <span>$150 (Aggressive)</span>
+            </div>
+          </div>
+
+          <!-- Quality / Grade Switcher -->
+          <div class="pt-2 border-t border-slate-800">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Material / Labor Grade Tier:</span>
+            <div class="grid grid-cols-3 gap-2" id="gradeSelector">
+              <button class="grade-btn active py-2 px-3 rounded-xl border border-cyan-500 bg-cyan-950/60 text-cyan-300 text-xs font-bold text-center" data-grade="standard">
+                Standard Tier
+                <span class="block text-[10px] text-slate-400 font-normal mt-0.5">COGS: Normal</span>
+              </button>
+              <button class="grade-btn py-2 px-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 text-xs font-bold text-center" data-grade="premium">
+                Organic / Pro Tier
+                <span class="block text-[10px] text-slate-400 font-normal mt-0.5">+40% COGS, +Demand</span>
+              </button>
+              <button class="grade-btn py-2 px-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 text-xs font-bold text-center" data-grade="budget">
+                Bulk Value Tier
+                <span class="block text-[10px] text-slate-400 font-normal mt-0.5">-25% COGS, -Demand</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics & Unit Economics Dashboard Column -->
+        <div class="lg:col-span-6 space-y-4">
+          <!-- Big KPI Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+              <span class="text-[11px] uppercase tracking-wider font-bold text-slate-400">Unit COGS</span>
+              <div id="cogsDisplay" class="text-xl sm:text-2xl font-black text-rose-400 mono mt-1">$1.50</div>
+              <span class="text-[10px] text-slate-500">Direct material/labor</span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+              <span class="text-[11px] uppercase tracking-wider font-bold text-slate-400">Gross Margin</span>
+              <div id="marginDisplay" class="text-xl sm:text-2xl font-black text-emerald-400 mono mt-1">75.0%</div>
+              <span id="marginHealth" class="text-[10px] text-emerald-400 font-bold">Ultra Healthy 🔥</span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl col-span-2 sm:col-span-1">
+              <span class="text-[11px] uppercase tracking-wider font-bold text-slate-400">Break-Even Vol</span>
+              <div id="breakEvenDisplay" class="text-xl sm:text-2xl font-black text-amber-400 mono mt-1">7 units</div>
+              <span class="text-[10px] text-slate-500">To cover ad spend</span>
+            </div>
+          </div>
+
+          <!-- Real-Time Projected Demand & Unit Bottleneck Visualizer -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-extrabold text-white text-base">Market Demand vs. Capacity</h4>
+                <p class="text-xs text-slate-400">Algorithm dynamically factors in Price, Marketing, and Macro Shocks</p>
+              </div>
+              <div id="demandPill" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                Est Demand: 34 units
+              </div>
+            </div>
+
+            <!-- Visual Bar Comparison -->
+            <div class="space-y-2">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-400">Planned Production / Capacity:</span>
+                  <span id="barCapacityText" class="font-mono font-bold text-cyan-400">40 units</span>
+                </div>
+                <div class="w-full bg-slate-950 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                  <div id="barCapacityFill" class="bg-cyan-500 h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-400">Customer Willingness to Buy (Demand):</span>
+                  <span id="barDemandText" class="font-mono font-bold text-indigo-400">34 units</span>
+                </div>
+                <div class="w-full bg-slate-950 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                  <div id="barDemandFill" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 34%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="outcomeNotice" class="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex items-start gap-2">
+              <span class="text-base">💡</span>
+              <p id="outcomeNoticeText">Balanced setup. You will sell most of your stock with minor inventory residue.</p>
+            </div>
+          </div>
+
+          <!-- Bottom-Line Projected Income Statement -->
+          <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-5 rounded-3xl">
+            <h4 class="text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-3">Projected Round Financial Summary</h4>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex justify-between text-slate-300">
+                <span>(+) Gross Sales Revenue:</span>
+                <span id="summaryRevenue" class="font-bold text-white">$204.00</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>(-) Production COGS:</span>
+                <span id="summaryCogs" class="text-rose-400">-$60.00</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>(-) Marketing & Ads:</span>
+                <span id="summaryAds" class="text-rose-400">-$30.00</span>
+              </div>
+              <div class="flex justify-between text-slate-400" id="spoilageRow">
+                <span>(-) Unsold Spoilage Penalty:</span>
+                <span id="summarySpoilage" class="text-rose-400">-$9.00</span>
+              </div>
+              <div class="pt-2 border-t border-slate-800 flex justify-between text-sm sm:text-base font-bold">
+                <span class="text-white">(=) Round Net Profit:</span>
+                <span id="summaryProfit" class="text-emerald-400 font-black">+$105.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section id="tab-shocks" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
+        <div class="max-w-xl">
+          <span class="text-xs uppercase font-black px-3 py-1 rounded-full bg-rose-950 text-rose-400 border border-rose-800">
+            Live Economic Simulator
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-2">The Market Curveball Arena</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-2">
+            In business, smooth sailing never lasts! Click below to trigger unexpected real-world events. Watch how each founder's business model responds.
+          </p>
+        </div>
+        <button id="triggerShockBtn" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 text-slate-950 font-black text-base shadow-xl shadow-rose-500/30 flex items-center gap-3 transition-transform active:scale-95 whitespace-nowrap">
+          <span class="text-xl">🎲</span>
+          <span>SPIN MARKET SHOCK</span>
+        </button>
+      </div>
+
+      <!-- Current Active Market Shock Alert Card -->
+      <div id="activeShockCard" class="bg-slate-900/90 border-2 border-dashed border-slate-700 p-6 rounded-3xl transition-all duration-300">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div class="flex items-center gap-3">
+            <span id="shockEmoji" class="text-4xl p-3 bg-slate-950 rounded-2xl border border-slate-800">☀️</span>
+            <div>
+              <span id="shockTag" class="text-[11px] font-mono font-bold uppercase text-amber-400">Current Market Condition: Baseline Normal</span>
+              <h3 id="shockTitle" class="text-xl font-black text-white">Mild Sunny Saturday in the Park</h3>
+            </div>
+          </div>
+          <span id="shockDuration" class="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-400">Active for Current Round</span>
+        </div>
+        <p id="shockDescription" class="text-sm text-slate-300 mt-4 leading-relaxed">
+          Standard park attendance. All materials have normal prices and customer demand follows baseline pricing elasticity.
+        </p>
+
+        <!-- Impact Matrix on the 3 Founders -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800" id="shockImpactPrithvika">
+            <div class="text-xs font-extrabold text-cyan-400 flex items-center gap-1.5">
+              <span>🍹 Prithvika Impact</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1 font-semibold" id="prithvikaShockText">Demand: Normal (1.0x)</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800" id="shockImpactAarav">
+            <div class="text-xs font-extrabold text-indigo-400 flex items-center gap-1.5">
+              <span>🖨️ Aarav Impact</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1 font-semibold" id="aaravShockText">Filament Supply: Stable (1.0x)</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800" id="shockImpactAkshaya">
+            <div class="text-xs font-extrabold text-emerald-400 flex items-center gap-1.5">
+              <span>🐾 Akshaya Impact</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1 font-semibold" id="akshayaShockText">Pet Walks: High Demand (1.0x)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historical Event Log for Instructor Display -->
+      <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-3xl">
+        <h4 class="text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-3">Recent Market Disruptions Log</h4>
+        <div id="shockLogList" class="space-y-2 text-xs">
+          <div class="text-slate-500 italic">No previous shocks triggered yet. Hit "SPIN MARKET SHOCK" above!</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-dilemmas" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-xs uppercase font-black px-3 py-1 rounded-full bg-violet-950 text-violet-400 border border-violet-800">
+              Interactive Boardroom Poll
+            </span>
+            <h2 class="text-2xl font-black text-white mt-2">Classroom Dilemma Matrix</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">Present real CEO trade-offs to the students and cast live votes!</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="prevDilemmaBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition">◀ Previous</button>
+            <button id="nextDilemmaBtn" class="px-3 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition">Next Dilemma ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Dilemma Card -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div class="flex items-center gap-3">
+          <span id="dilemmaFounderEmoji" class="text-3xl p-2.5 bg-slate-950 rounded-2xl border border-slate-800">🍹</span>
+          <div>
+            <span id="dilemmaCaseNumber" class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">Case 1 of 4</span>
+            <h3 id="dilemmaHeading" class="text-xl sm:text-2xl font-black text-white">Prithvika's Glass Bottle Crisis</h3>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 text-sm text-slate-200 leading-relaxed" id="dilemmaStory">
+          The eco-friendly glass bottle factory has broken down! The only backup supplier charges <strong class="text-rose-400">$3.00 per bottle</strong> instead of <strong class="text-emerald-400">$1.00</strong>. This cuts Prithvika's profit margin to zero if she keeps selling at $6. What should she do?
+        </div>
+
+        <!-- 3 Interactive Voting Options -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="dilemmaOptionsContainer">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Outcome Reveal Box -->
+        <div id="dilemmaRevealBox" class="hidden p-5 rounded-2xl bg-cyan-950/40 border border-cyan-700/50 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Business Takeaway & Solution Analysis</span>
+            <span class="text-xl">💡</span>
+          </div>
+          <p id="dilemmaRevealText" class="text-sm text-slate-200 leading-relaxed"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-leaderboard" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs uppercase font-black px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
+            Day 1 Finale
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Executive P&L Statement & Trophy Podiums</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Review the cash accumulated and gross margin efficiency across all rounds.</p>
+        </div>
+        <button id="celebrateWinnerBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 flex items-center gap-2 transition active:scale-95">
+          <span>🎉 Celebrate Champion Founder</span>
+        </button>
+      </div>
+
+      <!-- 3 Founders Summary Podiums -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Prithvika Podium -->
+        <div class="bg-slate-900 border border-cyan-800/50 rounded-3xl p-6 relative overflow-hidden shadow-xl flex flex-col justify-between">
+          <div class="absolute -top-12 -right-12 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🍹</span>
+              <span class="text-xs font-mono font-bold text-cyan-400 px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800">Eco-Chill Botanicals</span>
+            </div>
+            <h3 class="text-xl font-black text-white">Prithvika</h3>
+            <p class="text-xs text-slate-400 mt-1">Craft Beverage Innovator</p>
+
+            <div class="mt-6 space-y-3 font-mono text-xs">
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Final Cash Vault:</span>
+                <span id="finalCashPrithvika" class="text-emerald-400 font-bold text-base">$500.00</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Cumulative Net Profit:</span>
+                <span id="finalProfitPrithvika" class="text-cyan-300 font-bold">$0.00</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Units Sold:</span>
+                <span id="finalUnitsPrithvika" class="text-white font-bold">0 units</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400">
+            <strong>Key Learning:</strong> Guarding perishables while leveraging premium product branding.
+          </div>
+        </div>
+
+        <!-- Aarav Podium -->
+        <div class="bg-slate-900 border border-indigo-800/50 rounded-3xl p-6 relative overflow-hidden shadow-xl flex flex-col justify-between">
+          <div class="absolute -top-12 -right-12 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🖨️</span>
+              <span class="text-xs font-mono font-bold text-indigo-400 px-2 py-0.5 rounded-full bg-indigo-950 border border-indigo-800">HyperCraft 3D Works</span>
+            </div>
+            <h3 class="text-xl font-black text-white">Aarav</h3>
+            <p class="text-xs text-slate-400 mt-1">Rapid Tech Prototyper</p>
+
+            <div class="mt-6 space-y-3 font-mono text-xs">
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Final Cash Vault:</span>
+                <span id="finalCashAarav" class="text-emerald-400 font-bold text-base">$500.00</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Cumulative Net Profit:</span>
+                <span id="finalProfitAarav" class="text-indigo-300 font-bold">$0.00</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Units Sold:</span>
+                <span id="finalUnitsAarav" class="text-white font-bold">0 units</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400">
+            <strong>Key Learning:</strong> Capacity constraints mean pricing higher to maximize bottleneck output.
+          </div>
+        </div>
+
+        <!-- Akshaya Podium -->
+        <div class="bg-slate-900 border border-emerald-800/50 rounded-3xl p-6 relative overflow-hidden shadow-xl flex flex-col justify-between">
+          <div class="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🐾</span>
+              <span class="text-xs font-mono font-bold text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800">Paws & Motion Concierge</span>
+            </div>
+            <h3 class="text-xl font-black text-white">Akshaya</h3>
+            <p class="text-xs text-slate-400 mt-1">Pet Wellness Director</p>
+
+            <div class="mt-6 space-y-3 font-mono text-xs">
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Final Cash Vault:</span>
+                <span id="finalCashAkshaya" class="text-emerald-400 font-bold text-base">$500.00</span>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span>Cumulative Net Profit:</span>
+                <span id="finalProfitAkshaya" class="text-emerald-300 font-bold">$0.00</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Service Slots Booked:</span>
+                <span id="finalUnitsAkshaya" class="text-white font-bold">0 bookings</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400">
+            <strong>Key Learning:</strong> Zero inventory risk, but scalable only by optimizing contractor labor margins.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Instructor Debrief Cheat Sheet -->
+      <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800">
+        <h4 class="text-sm font-bold text-white mb-2">🎓 Teacher's 5-Minute Closing Questions for the Room:</h4>
+        <ul class="list-disc list-inside space-y-2 text-xs text-slate-300">
+          <li><strong>To Prithvika's Team:</strong> "Why is producing 100 bottles dangerous when demand is only 40 bottles?" <em>(Answer: Spoiled inventory burns cold cash)</em>.</li>
+          <li><strong>To Aarav's Team:</strong> "When your 3D printer can only make 30 keychains, should you lower price to $2 or raise to $8?" <em>(Answer: Raise price! High demand + low capacity = premium pricing power)</em>.</li>
+          <li><strong>To Akshaya's Team:</strong> "Why did a sudden heatwave hurt dog walking but help Prithvika's drinks?" <em>(Answer: Macro factors impact businesses in opposite ways!)</em>.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* =========================================================
+       1. GLOBAL STATE & SOUND SYNTHESIS
+       ========================================================= */
+    const state = {
+      // 120-minute class timer (in seconds)
+      timerSeconds: 120 * 60,
+      timerRunning: false,
+      timerInterval: null,
+      soundEnabled: true,
+      
+      // Active Founder in Tab 2
+      activeFounder: 'prithvika', // 'prithvika', 'aarav', 'akshaya'
+      activeGrade: 'standard',    // 'budget', 'standard', 'premium'
+
+      // Business Model Definitions
+      founders: {
+        prithvika: {
+          name: "Prithvika",
+          bizName: "Eco-Chill Botanicals",
+          emoji: "🍹",
+          tagline: "Artisanal Craft Beverages",
+          color: "cyan",
+          cash: 500.0,
+          totalProfit: 0.0,
+          totalUnitsSold: 0,
+          baseCogs: 1.50, // Per bottle (glass, organic herb extract)
+          maxCapacity: 100,
+          perishable: true, // Unsold bottles expire!
+          laborMultiplier: 1.0,
+          volume: 40,
+          price: 6.0,
+          marketing: 30
+        },
+        aarav: {
+          name: "Aarav",
+          bizName: "HyperCraft 3D Works",
+          emoji: "🖨️️",
+          tagline: "Custom Gadgets & Keychains",
+          color: "indigo",
+          cash: 500.0,
+          totalProfit: 0.0,
+          totalUnitsSold: 0,
+          baseCogs: 0.80, // Filament cost is very low!
+          maxCapacity: 35, // Bottleneck: 3D printer print duration!
+          perishable: false,
+          laborMultiplier: 1.0,
+          volume: 25,
+          price: 9.0,
+          marketing: 25
+        },
+        akshaya: {
+          name: "Akshaya",
+          bizName: "Paws & Motion Concierge",
+          emoji: "🐾",
+          tagline: "Premium Pet Wellness & Walking",
+          color: "emerald",
+          cash: 500.0,
+          totalProfit: 0.0,
+          totalUnitsSold: 0,
+          baseCogs: 4.50, // Paid to student walkers per session
+          maxCapacity: 50,
+          perishable: false, // Service-based, zero physical spoilage
+          laborMultiplier: 1.0,
+          volume: 20,
+          price: 14.0,
+          marketing: 35
+        }
+      },
+
+      // Active Macro Economic Condition
+      activeShock: {
+        id: "baseline",
+        title: "Mild Sunny Saturday in the Park",
+        emoji: "☀️",
+        tag: "Current Market Condition: Baseline Normal",
+        description: "Standard park attendance. All materials have normal prices and customer demand follows baseline pricing elasticity.",
+        prithvikaDemandMult: 1.0,
+        aaravCostMult: 1.0,
+        akshayaDemandMult: 1.0,
+        marketingBoost: 1.0
+      },
+
+      // Dilemma Matrix Data
+      dilemmaIndex: 0,
+      dilemmas: [
+        {
+          founder: "prithvika",
+          founderEmoji: "🍹",
+          caseNumber: "Case 1 of 4",
+          heading: "Glass Bottle Supply Shortage",
+          story: "A worldwide sand shortage doubled the cost of eco-glass bottles! Prithvika's direct COGS jumped from $1.50 to $3.50. Her retail price is $6.00. How should the board respond?",
+          options: [
+            {
+              id: "A",
+              text: "Raise price to $8.50 to protect margin",
+              votes: 0,
+              result: "Smart Move! Because her product is organic & premium, loyal customers accepted the price increase. Revenue grew with 60% gross margin intact."
+            },
+            {
+              id: "B",
+              text: "Switch to cheap plastic bottles (COGS drops to $0.80)",
+              votes: 0,
+              result: "Backfire! Eco-conscious customers noticed and boycotted on social media. Demand dropped by 65%. Cheaper isn't always better for a green brand!"
+            },
+            {
+              id: "C",
+              text: "Keep price at $6.00 and absorb the loss",
+              votes: 0,
+              result: "Dangerous. Net margin plummeted to barely 5%. One slow rainy day wiped out an entire week's profits!"
+            }
+          ]
+        },
+        {
+          founder: "aarav",
+          founderEmoji: "🖨️️",
+          caseNumber: "Case 2 of 4",
+          heading: "The 3D Printer Bottleneck Crisis",
+          story: "Aarav's neon game-controller keychains went viral at school! 150 kids want one this week, but his single 3D printer can only print 30 units maximum before Saturday.",
+          options: [
+            {
+              id: "A",
+              text: "Turn on 'Ludicrous High-Speed Mode' (Print 3x faster)",
+              votes: 0,
+              result: "Disaster! The printer nozzle clogged, breaking 18 prints midway and wasting $40 of filament. Speed without quality control creates scrap!"
+            },
+            {
+              id: "B",
+              text: "Introduce 'Limited Edition VIP Batch' at $15 each",
+              votes: 0,
+              result: "Masterstroke! With fixed capacity (30 units), scarcity created high perceived value. He sold all 30 at double the price and made record profits!"
+            },
+            {
+              id: "C",
+              text: "Spend $400 of starting capital to buy a second printer immediately",
+              votes: 0,
+              result: "Risky capital allocation. He doubled output, but now has only $100 cash runway left. If demand drops next week, he's stuck with idle machinery!"
+            }
+          ]
+        },
+        {
+          founder: "akshaya",
+          founderEmoji: "🐾",
+          caseNumber: "Case 3 of 4",
+          heading: "The Rainy Monsoon Surge",
+          story: "A torrential downpour hit town. Dog owners refuse to walk their muddy pets outside, but need someone to bathe and groom them indoors.",
+          options: [
+            {
+              id: "A",
+              text: "Offer 'At-Home Warm Bath & Brush' Package at $25",
+              votes: 0,
+              result: "Brilliant Pivot! Akshaya adapted her service to rainy weather demand. Dog owners gladly paid high ticket prices to keep their carpets clean!"
+            },
+            {
+              id: "B",
+              text: "Discount outdoor walks to $5 to force bookings",
+              votes: 0,
+              result: "Flop! Nobody wants their pet soaked in mud even if it's cheap. Price cuts do not create demand when customers don't want the core product!"
+            },
+            {
+              id: "C",
+              text: "Close business for the week and wait for the sun",
+              votes: 0,
+              result: "Zero revenue, but still had to pay fixed advertising bills. Fixed costs during zero-revenue days bleed cash fast!"
+            }
+          ]
+        },
+        {
+          founder: "all",
+          founderEmoji: "🤝",
+          caseNumber: "Case 4 of 4",
+          heading: "The Park Festival Partnership Offer",
+          story: "The City Festival wants an exclusive booth. They ask for a $120 booth fee upfront, but promise 500 visitors in one afternoon. Can the 3 founders team up?",
+          options: [
+            {
+              id: "A",
+              text: "Co-bundle: Drink + Pet bandana + 3D festival token for $20",
+              votes: 0,
+              result: "Tremendous Success! Splitting the $120 fee 3 ways ($40 each) minimized individual risk, while the combined bundle was the hit of the festival!"
+            },
+            {
+              id: "B",
+              text: "Refuse to partner; compete individually for separate booths",
+              votes: 0,
+              result: "Each spent $120 separately ($360 total burned). Aarav hit his 30-unit bottleneck and couldn't even cover his booth fee!"
+            },
+            {
+              id: "C",
+              text: "Only Prithvika goes, because her profit margin is the highest",
+              votes: 0,
+              result: "Prithvika sold out, but missed out on pet owners and gamer kids who would have bought cross-promoted products."
+            }
+          ]
+        }
+      ],
+
+      // Shock Catalog
+      marketShocks: [
+        {
+          id: "heatwave",
+          emoji: "🔥",
+          tag: "Climate Event",
+          title: "Scorching 98°F Heatwave!",
+          description: "Pavements are burning hot! Prithvika's iced botanical drinks are in massive demand (+150%). However, hot asphalt cuts dog walking demand in half.",
+          prithvikaDemandMult: 2.2,
+          aaravCostMult: 1.0,
+          akshayaDemandMult: 0.5,
+          marketingBoost: 1.2
+        },
+        {
+          id: "tiktok_viral",
+          emoji: "📱",
+          tag: "Social Media Trend",
+          title: "Viral TikTok Creator Features HyperCraft!",
+          description: "A popular teen streamer showed off Aarav's glowing 3D keychains. Aarav's demand jumps +250%, but raw filament price creeps up 30%.",
+          prithvikaDemandMult: 1.1,
+          aaravCostMult: 1.3,
+          akshayaDemandMult: 1.0,
+          marketingBoost: 2.0
+        },
+        {
+          id: "pet_fair",
+          emoji: "🐕",
+          tag: "Community Event",
+          title: "Annual Community Pet Expo in Town!",
+          description: "Over 300 dogs gather at the civic park. Akshaya's pet care bookings surge (+200%), and she can command premium $18 prices.",
+          prithvikaDemandMult: 1.2,
+          aaravCostMult: 1.0,
+          akshayaDemandMult: 2.0,
+          marketingBoost: 1.4
+        },
+        {
+          id: "supply_crisis",
+          emoji: "🚢",
+          tag: "Supply Chain Shock",
+          title: "Freight Port Bottleneck & Material Surge",
+          description: "Shipping delays double raw plastic & glass costs across the region! Production COGS increases +80% for both physical products.",
+          prithvikaDemandMult: 0.9,
+          aaravCostMult: 1.8,
+          akshayaDemandMult: 1.1,
+          marketingBoost: 0.9
+        },
+        {
+          id: "green_subsidy",
+          emoji: "🌱",
+          tag: "Government Policy",
+          title: "Green City Eco-Grant Subsidies Awarded!",
+          description: "Town awards $50 direct bonus to sustainable brands. Prithvika receives bonus cash, and eco-friendly consumer preference rises.",
+          prithvikaDemandMult: 1.4,
+          aaravCostMult: 1.0,
+          akshayaDemandMult: 1.2,
+          marketingBoost: 1.2
+        }
+      ]
+    };
+
+    const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+    function playBeep(freq = 600, type = 'sine', duration = 0.15) {
+      if (!state.soundEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {
+        // audio context autoplay restrictions
+      }
+    }
+
+    function playSuccessChime() {
+      if (!state.soundEnabled) return;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        setTimeout(() => playBeep(freq, 'triangle', 0.25), idx * 80);
+      });
+    }
+
+    function playAlertChime() {
+      if (!state.soundEnabled) return;
+      playBeep(240, 'sawtooth', 0.2);
+      setTimeout(() => playBeep(180, 'sawtooth', 0.3), 150);
+    }
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti() {
+      const colors = ['#38bdf8', '#34d399', '#f43f5e', '#fbbf24', '#a855f7'];
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * 14,
+          vy: Math.random() * -12 - 4,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+    }
+
+    function renderConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // gravity
+        p.rotation += p.vRot;
+        p.opacity -= 0.012;
+
+        if (p.opacity <= 0 || p.y > canvas.height) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+        ctx.restore();
+      }
+      requestAnimationFrame(renderConfetti);
+    }
+    requestAnimationFrame(renderConfetti);
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerToggleBtn = document.getElementById('timerToggleBtn');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const timerResetBtn = document.getElementById('timerResetBtn');
+
+    function updateTimerUI() {
+      const minutes = Math.floor(state.timerSeconds / 60);
+      const seconds = state.timerSeconds % 60;
+      timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+      // Update Phase Highlight according to 120m countdown
+      const elapsedMin = 120 - minutes;
+      ['phase-1', 'phase-2', 'phase-3', 'phase-4', 'phase-5'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const dot = el.querySelector('span');
+          dot.className = "w-2 h-2 rounded-full bg-slate-600";
+        }
+      });
+
+      let currentPhaseId = 'phase-1';
+      if (elapsedMin >= 105) currentPhaseId = 'phase-5';
+      else if (elapsedMin >= 70) currentPhaseId = 'phase-4';
+      else if (elapsedMin >= 55) currentPhaseId = 'phase-3';
+      else if (elapsedMin >= 20) currentPhaseId = 'phase-2';
+
+      const activeEl = document.getElementById(currentPhaseId);
+      if (activeEl) {
+        const dot = activeEl.querySelector('span');
+        dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse";
+      }
+    }
+
+    timerToggleBtn.addEventListener('click', () => {
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      state.timerRunning = !state.timerRunning;
+      if (state.timerRunning) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        state.timerInterval = setInterval(() => {
+          if (state.timerSeconds > 0) {
+            state.timerSeconds--;
+            updateTimerUI();
+          } else {
+            clearInterval(state.timerInterval);
+            state.timerRunning = false;
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            playAlertChime();
+          }
+        }, 1000);
+      } else {
+        clearInterval(state.timerInterval);
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+      }
+      playBeep(500, 'sine', 0.1);
+    });
+
+    timerResetBtn.addEventListener('click', () => {
+      clearInterval(state.timerInterval);
+      state.timerRunning = false;
+      state.timerSeconds = 120 * 60;
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+      updateTimerUI();
+      playBeep(400, 'sine', 0.1);
+    });
+
+    document.getElementById('soundFxToggle').addEventListener('click', (e) => {
+      state.soundEnabled = !state.soundEnabled;
+      e.currentTarget.textContent = state.soundEnabled ? '🔊' : '🔇';
+      playBeep(650, 'sine', 0.1);
+    });
+
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    navTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        navTabs.forEach(b => {
+          b.className = "nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white";
+        });
+        btn.className = "nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20";
+
+        tabContents.forEach(c => c.classList.add('hidden'));
+        document.getElementById(target).classList.remove('hidden');
+        playBeep(700, 'triangle', 0.08);
+
+        if (target === 'tab-leaderboard') {
+          updateLeaderboardUI();
+        }
+      });
+    });
+
+    const inputVolume = document.getElementById('inputVolume');
+    const inputPrice = document.getElementById('inputPrice');
+    const inputMarketing = document.getElementById('inputMarketing');
+
+    const volumeValue = document.getElementById('volumeValue');
+    const priceValue = document.getElementById('priceValue');
+    const marketingValue = document.getElementById('marketingValue');
+
+    const cogsDisplay = document.getElementById('cogsDisplay');
+    const marginDisplay = document.getElementById('marginDisplay');
+    const marginHealth = document.getElementById('marginHealth');
+    const breakEvenDisplay = document.getElementById('breakEvenDisplay');
+
+    const barCapacityFill = document.getElementById('barCapacityFill');
+    const barCapacityText = document.getElementById('barCapacityText');
+    const barDemandFill = document.getElementById('barDemandFill');
+    const barDemandText = document.getElementById('barDemandText');
+    const demandPill = document.getElementById('demandPill');
+    const outcomeNoticeText = document.getElementById('outcomeNoticeText');
+
+    const summaryRevenue = document.getElementById('summaryRevenue');
+    const summaryCogs = document.getElementById('summaryCogs');
+    const summaryAds = document.getElementById('summaryAds');
+    const summarySpoilage = document.getElementById('summarySpoilage');
+    const summaryProfit = document.getElementById('summaryProfit');
+    const founderCashDisplay = document.getElementById('founderCashDisplay');
+
+    // Founder Selector Buttons
+    document.querySelectorAll('.founder-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.founder-btn').forEach(b => {
+          b.className = "founder-btn px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white";
+        });
+        btn.className = "founder-btn px-4 py-1.5 rounded-lg text-xs font-bold transition bg-cyan-500 text-slate-950";
+        state.activeFounder = btn.dataset.founder;
+        loadFounderIntoControls();
+        playBeep(600, 'sine', 0.1);
+      });
+    });
+
+    // Material Grade Tier Buttons
+    document.querySelectorAll('.grade-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.grade-btn').forEach(b => {
+          b.className = "grade-btn py-2 px-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 text-xs font-bold text-center";
+        });
+        btn.className = "grade-btn active py-2 px-3 rounded-xl border border-cyan-500 bg-cyan-950/60 text-cyan-300 text-xs font-bold text-center";
+        state.activeGrade = btn.dataset.grade;
+        calculateModel();
+        playBeep(550, 'sine', 0.08);
+      });
+    });
+
+    function loadFounderIntoControls() {
+      const f = state.founders[state.activeFounder];
+      document.getElementById('activeFounderName').textContent = `${f.name}'s Operations Deck`;
+      document.getElementById('activeFounderBadge').textContent = f.bizName;
+      founderCashDisplay.textContent = `$${f.cash.toFixed(2)}`;
+
+      // Update constraints info
+      const note = document.getElementById('volumeConstraintNote');
+      const label = document.getElementById('volumeLabel');
+
+      if (state.activeFounder === 'prithvika') {
+        label.textContent = "Production Batch Size (Bottles)";
+        note.textContent = "⚠️ Risk: Unsold organic drinks spoil!";
+        note.className = "text-rose-400";
+        inputVolume.max = "100";
+      } else if (state.activeFounder === 'aarav') {
+        label.textContent = "Printer Batch Size (Keychains)";
+        note.textContent = "⚠️ Machine Limit: Max 35 units printer speed bottleneck!";
+        note.className = "text-amber-400";
+        inputVolume.max = "50";
+      } else {
+        label.textContent = "Service Slots Available (Bookings)";
+        note.textContent = "⚠️ Zero Spoilage: Contractor wages scale with bookings!";
+        note.className = "text-emerald-400";
+        inputVolume.max = "60";
+      }
+
+      inputVolume.value = f.volume;
+      inputPrice.value = f.price;
+      inputMarketing.value = f.marketing;
+
+      calculateModel();
+    }
+
+    function calculateModel() {
+      const f = state.founders[state.activeFounder];
+      const volume = parseInt(inputVolume.value, 10);
+      const price = parseFloat(inputPrice.value);
+      const marketing = parseFloat(inputMarketing.value);
+
+      // Save to active state
+      f.volume = volume;
+      f.price = price;
+      f.marketing = marketing;
+
+      // Update Sliders labels
+      volumeValue.textContent = `${volume} units`;
+      priceValue.textContent = `$${price.toFixed(2)}`;
+      marketingValue.textContent = `$${marketing.toFixed(2)}`;
+
+      // Calculate Effective COGS based on Grade & Market Shock
+      let gradeMultiplier = 1.0;
+      if (state.activeGrade === 'premium') gradeMultiplier = 1.4;
+      if (state.activeGrade === 'budget') gradeMultiplier = 0.75;
+
+      let shockCogsMultiplier = 1.0;
+      if (state.activeFounder === 'aarav') shockCogsMultiplier = state.activeShock.aaravCostMult;
+      if (state.activeFounder === 'prithvika' && state.activeShock.id === 'supply_crisis') shockCogsMultiplier = 1.8;
+
+      const unitCogs = f.baseCogs * gradeMultiplier * shockCogsMultiplier;
+      const unitMargin = price - unitCogs;
+      const grossMarginPct = price > 0 ? (unitMargin / price) * 100 : 0;
+
+      // Break-even formula = Marketing Spend / Unit Margin
+      const breakEvenUnits = unitMargin > 0 ? Math.ceil(marketing / unitMargin) : 999;
+
+      // Dynamic Market Demand Engine
+      let baseMarketDemand = 35;
+      // Price Elasticity: lower price increases demand, high price dampens demand
+      let priceAttractiveness = Math.max(0.2, (15 - price) / 10);
+      // Marketing Reach: logarithmic diminishing returns
+      let marketingReach = Math.sqrt(marketing) * 2.2;
+      // Quality tier perception
+      let qualityBonus = state.activeGrade === 'premium' ? 8 : (state.activeGrade === 'budget' ? -6 : 0);
+
+      // Founder-specific macro shock multipliers
+      let shockDemandMult = 1.0;
+      if (state.activeFounder === 'prithvika') shockDemandMult = state.activeShock.prithvikaDemandMult;
+      if (state.activeFounder === 'akshaya') shockDemandMult = state.activeShock.akshayaDemandMult;
+
+      let rawDemand = Math.round((baseMarketDemand * priceAttractiveness + marketingReach + qualityBonus) * shockDemandMult * state.activeShock.marketingBoost);
+      const estimatedDemand = Math.max(2, rawDemand);
+
+      // Capacity Bottleneck checks
+      let actualSold = Math.min(volume, estimatedDemand);
+      let bottleneckHit = false;
+
+      if (state.activeFounder === 'aarav' && volume > f.maxCapacity) {
+        // Aarav's 3D printer capacity hard cap
+        actualSold = Math.min(f.maxCapacity, estimatedDemand);
+        bottleneckHit = true;
+      }
+
+      // Spoilage penalty for Prithvika
+      let unsold = Math.max(0, volume - actualSold);
+      let spoilageLoss = 0;
+      if (state.activeFounder === 'prithvika' && unsold > 0) {
+        spoilageLoss = unsold * unitCogs; // Spoiled inventory cost burned
+      }
+
+      // Financial Income Statement
+      const totalRevenue = actualSold * price;
+      const totalCogs = volume * unitCogs;
+      const netProfit = totalRevenue - totalCogs - marketing - spoilageLoss;
+
+      // Update Dashboard UI Elements
+      cogsDisplay.textContent = `$${unitCogs.toFixed(2)}`;
+      marginDisplay.textContent = `${grossMarginPct.toFixed(1)}%`;
+
+      if (grossMarginPct >= 60) {
+        marginDisplay.className = "text-xl sm:text-2xl font-black text-emerald-400 mono mt-1";
+        marginHealth.textContent = "Ultra Healthy 🔥";
+        marginHealth.className = "text-[10px] text-emerald-400 font-bold";
+      } else if (grossMarginPct >= 30) {
+        marginDisplay.className = "text-xl sm:text-2xl font-black text-amber-400 mono mt-1";
+        marginHealth.textContent = "Moderate Margin ⚖️";
+        marginHealth.className = "text-[10px] text-amber-400 font-bold";
+      } else {
+        marginDisplay.className = "text-xl sm:text-2xl font-black text-rose-400 mono mt-1";
+        marginHealth.textContent = "Dangerous Loss Zone ⚠️";
+        marginHealth.className = "text-[10px] text-rose-400 font-bold";
+      }
+
+      breakEvenDisplay.textContent = unitMargin > 0 ? `${breakEvenUnits} units` : "Impossible";
+
+      // Bars & Visualizer
+      demandPill.textContent = `Est Demand: ${estimatedDemand} units`;
+      barCapacityText.textContent = `${volume} units ${bottleneckHit ? '(Bottleneck Capped!)' : ''}`;
+      barDemandText.textContent = `${estimatedDemand} units`;
+
+      const maxScale = Math.max(volume, estimatedDemand, 60);
+      barCapacityFill.style.width = `${Math.min(100, (volume / maxScale) * 100)}%`;
+      barDemandFill.style.width = `${Math.min(100, (estimatedDemand / maxScale) * 100)}%`;
+
+      // Contextual Advice Notice
+      if (bottleneckHit) {
+        outcomeNoticeText.innerHTML = `<span class="text-amber-300 font-bold">⚠️ Machine Bottleneck Warning!</span> Aarav's 3D printer capped production at ${f.maxCapacity} units. You planned ${volume}, wasting setup time. Raise price to capture higher margins on scarce supply!`;
+      } else if (unsold > 10 && state.activeFounder === 'prithvika') {
+        outcomeNoticeText.innerHTML = `<span class="text-rose-400 font-bold">🚨 High Spoilage Hazard!</span> You produced ${volume} bottles but demand is only ${estimatedDemand}. ${unsold} unsold bottles will turn into bad liquid and lose you $${spoilageLoss.toFixed(2)} in cold cash!`;
+      } else if (estimatedDemand > volume + 15) {
+        outcomeNoticeText.innerHTML = `<span class="text-cyan-300 font-bold">📈 Money Left on the Table!</span> Demand (${estimatedDemand}) is way higher than batch size (${volume}). You could produce more units or increase price safely!`;
+      } else {
+        outcomeNoticeText.textContent = "Well-balanced operations! Your production volume closely mirrors actual park demand.";
+      }
+
+      // Summary Statement
+      summaryRevenue.textContent = `$${totalRevenue.toFixed(2)} (${actualSold} sold)`;
+      summaryCogs.textContent = `-$${totalCogs.toFixed(2)}`;
+      summaryAds.textContent = `-$${marketing.toFixed(2)}`;
+      summarySpoilage.textContent = spoilageLoss > 0 ? `-$${spoilageLoss.toFixed(2)}` : "$0.00";
+
+      if (netProfit >= 0) {
+        summaryProfit.textContent = `+$${netProfit.toFixed(2)}`;
+        summaryProfit.className = "text-emerald-400 font-black";
+      } else {
+        summaryProfit.textContent = `-$${Math.abs(netProfit).toFixed(2)}`;
+        summaryProfit.className = "text-rose-400 font-black";
+      }
+    }
+
+    [inputVolume, inputPrice, inputMarketing].forEach(el => {
+      el.addEventListener('input', calculateModel);
+    });
+
+    // Execute Production Round Button
+    document.getElementById('runSimulationRoundBtn').addEventListener('click', () => {
+      const f = state.founders[state.activeFounder];
+      const volume = parseInt(inputVolume.value, 10);
+      const price = parseFloat(inputPrice.value);
+      const marketing = parseFloat(inputMarketing.value);
+
+      let gradeMultiplier = state.activeGrade === 'premium' ? 1.4 : (state.activeGrade === 'budget' ? 0.75 : 1.0);
+      let shockCogsMultiplier = (state.activeFounder === 'aarav') ? state.activeShock.aaravCostMult : 1.0;
+      if (state.activeFounder === 'prithvika' && state.activeShock.id === 'supply_crisis') shockCogsMultiplier = 1.8;
+
+      const unitCogs = f.baseCogs * gradeMultiplier * shockCogsMultiplier;
+      let shockDemandMult = (state.activeFounder === 'prithvika') ? state.activeShock.prithvikaDemandMult : (state.activeFounder === 'akshaya' ? state.activeShock.akshayaDemandMult : 1.0);
+      let estDemand = Math.round((35 * Math.max(0.2, (15 - price) / 10) + Math.sqrt(marketing) * 2.2) * shockDemandMult * state.activeShock.marketingBoost);
+
+      let actualSold = Math.min(volume, estDemand);
+      if (state.activeFounder === 'aarav' && volume > f.maxCapacity) {
+        actualSold = Math.min(f.maxCapacity, estDemand);
+      }
+
+      let unsold = Math.max(0, volume - actualSold);
+      let spoilageLoss = (state.activeFounder === 'prithvika') ? unsold * unitCogs : 0;
+      const netProfit = (actualSold * price) - (volume * unitCogs) - marketing - spoilageLoss;
+
+      // Update Founder Financials
+      f.cash += netProfit;
+      f.totalProfit += netProfit;
+      f.totalUnitsSold += actualSold;
+
+      founderCashDisplay.textContent = `$${f.cash.toFixed(2)}`;
+
+      if (netProfit > 0) {
+        playSuccessChime();
+        triggerConfetti();
+      } else {
+        playAlertChime();
+      }
+    });
+
+    const triggerShockBtn = document.getElementById('triggerShockBtn');
+    const shockEmoji = document.getElementById('shockEmoji');
+    const shockTag = document.getElementById('shockTag');
+    const shockTitle = document.getElementById('shockTitle');
+    const shockDescription = document.getElementById('shockDescription');
+    const shockLogList = document.getElementById('shockLogList');
+
+    triggerShockBtn.addEventListener('click', () => {
+      // Pick random shock different from current
+      const available = state.marketShocks.filter(s => s.id !== state.activeShock.id);
+      const chosen = available[Math.floor(Math.random() * available.length)];
+      state.activeShock = chosen;
+
+      // Animate shock card
+      const card = document.getElementById('activeShockCard');
+      card.classList.add('scale-105', 'border-rose-500');
+      setTimeout(() => card.classList.remove('scale-105'), 300);
+
+      shockEmoji.textContent = chosen.emoji;
+      shockTag.textContent = `Event Type: ${chosen.tag}`;
+      shockTitle.textContent = chosen.title;
+      shockDescription.textContent = chosen.description;
+
+      // Update Impact Cards
+      document.getElementById('prithvikaShockText').innerHTML = `Demand: <strong class="${chosen.prithvikaDemandMult > 1 ? 'text-emerald-400' : 'text-rose-400'}">${chosen.prithvikaDemandMult}x</strong>`;
+      document.getElementById('aaravShockText').innerHTML = `Material Cost: <strong class="${chosen.aaravCostMult > 1 ? 'text-rose-400' : 'text-emerald-400'}">${chosen.aaravCostMult}x</strong>`;
+      document.getElementById('akshayaShockText').innerHTML = `Bookings: <strong class="${chosen.akshayaDemandMult > 1 ? 'text-emerald-400' : 'text-rose-400'}">${chosen.akshayaDemandMult}x</strong>`;
+
+      // Log Entry
+      const entry = document.createElement('div');
+      entry.className = "p-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between";
+      entry.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span>${chosen.emoji}</span>
+          <span class="font-bold text-white">${chosen.title}</span>
+        </div>
+        <span class="text-slate-500 font-mono text-[10px]">Round Event</span>
+      `;
+      if (shockLogList.querySelector('.italic')) {
+        shockLogList.innerHTML = '';
+      }
+      shockLogList.prepend(entry);
+
+      playAlertChime();
+      calculateModel();
+    });
+
+    function renderCurrentDilemma() {
+      const d = state.dilemmas[state.dilemmaIndex];
+      document.getElementById('dilemmaCaseNumber').textContent = d.caseNumber;
+      document.getElementById('dilemmaHeading').textContent = d.heading;
+      document.getElementById('dilemmaFounderEmoji').textContent = d.founderEmoji;
+      document.getElementById('dilemmaStory').textContent = d.story;
+
+      const container = document.getElementById('dilemmaOptionsContainer');
+      container.innerHTML = '';
+
+      d.options.forEach((opt, idx) => {
+        const optCard = document.createElement('div');
+        optCard.className = "bg-slate-950/80 border border-slate-800 hover:border-cyan-500/50 transition p-5 rounded-2xl flex flex-col justify-between space-y-4 shadow-lg";
+        optCard.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="w-7 h-7 rounded-xl bg-cyan-950 border border-cyan-800 text-cyan-300 font-black text-xs flex items-center justify-center">
+                ${opt.id}
+              </span>
+              <span class="mono text-xs font-bold text-slate-400 vote-count-${idx}">${opt.votes} Votes</span>
+            </div>
+            <p class="text-sm font-bold text-white">${opt.text}</p>
+          </div>
+          <div class="space-y-2 pt-2 border-t border-slate-900">
+            <div class="flex items-center gap-2">
+              <button class="vote-up flex-1 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition" data-idx="${idx}">+ Add Vote</button>
+              <button class="vote-down px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition" data-idx="${idx}">-</button>
+            </div>
+            <button class="reveal-btn w-full py-1.5 rounded-lg bg-slate-900 hover:bg-indigo-950 text-indigo-300 border border-indigo-900/60 font-semibold text-xs transition" data-idx="${idx}">
+              Simulate Result ⚡
+            </button>
+          </div>
+        `;
+        container.appendChild(optCard);
+      });
+
+      // Hide reveal box on change
+      document.getElementById('dilemmaRevealBox').classList.add('hidden');
+
+      // Attach voting listeners
+      container.querySelectorAll('.vote-up').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.dataset.idx, 10);
+          d.options[idx].votes++;
+          renderCurrentDilemma();
+          playBeep(520, 'sine', 0.08);
+        });
+      });
+
+      container.querySelectorAll('.vote-down').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.dataset.idx, 10);
+          if (d.options[idx].votes > 0) d.options[idx].votes--;
+          renderCurrentDilemma();
+          playBeep(380, 'sine', 0.08);
+        });
+      });
+
+      container.querySelectorAll('.reveal-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.dataset.idx, 10);
+          const box = document.getElementById('dilemmaRevealBox');
+          const text = document.getElementById('dilemmaRevealText');
+          text.innerHTML = `<strong>Option ${d.options[idx].id} Analysis:</strong> ${d.options[idx].result}`;
+          box.classList.remove('hidden');
+          playSuccessChime();
+        });
+      });
+    }
+
+    document.getElementById('nextDilemmaBtn').addEventListener('click', () => {
+      state.dilemmaIndex = (state.dilemmaIndex + 1) % state.dilemmas.length;
+      renderCurrentDilemma();
+      playBeep(650, 'sine', 0.08);
+    });
+
+    document.getElementById('prevDilemmaBtn').addEventListener('click', () => {
+      state.dilemmaIndex = (state.dilemmaIndex - 1 + state.dilemmas.length) % state.dilemmas.length;
+      renderCurrentDilemma();
+      playBeep(650, 'sine', 0.08);
+    });
+
+    function updateLeaderboardUI() {
+      const p = state.founders.prithvika;
+      const a = state.founders.aarav;
+      const ak = state.founders.akshaya;
+
+      document.getElementById('finalCashPrithvika').textContent = `$${p.cash.toFixed(2)}`;
+      document.getElementById('finalProfitPrithvika').textContent = `$${p.totalProfit.toFixed(2)}`;
+      document.getElementById('finalUnitsPrithvika').textContent = `${p.totalUnitsSold} units`;
+
+      document.getElementById('finalCashAarav').textContent = `$${a.cash.toFixed(2)}`;
+      document.getElementById('finalProfitAarav').textContent = `$${a.totalProfit.toFixed(2)}`;
+      document.getElementById('finalUnitsAarav').textContent = `${a.totalUnitsSold} units`;
+
+      document.getElementById('finalCashAkshaya').textContent = `$${ak.cash.toFixed(2)}`;
+      document.getElementById('finalProfitAkshaya').textContent = `$${ak.totalProfit.toFixed(2)}`;
+      document.getElementById('finalUnitsAkshaya').textContent = `${ak.totalUnitsSold} bookings`;
+    }
+
+    document.getElementById('celebrateWinnerBtn').addEventListener('click', () => {
+      triggerConfetti();
+      playSuccessChime();
+    });
+
+    window.addEventListener('load', () => {
+      loadFounderIntoControls();
+      renderCurrentDilemma();
+      updateTimerUI();
+    });
+  </script>
+</body>
+</html>
